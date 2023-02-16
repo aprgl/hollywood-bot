@@ -1,28 +1,32 @@
-#
-#   Hello World client in Python
-#   Connects REQ socket to tcp://localhost:5555
-#   Sends "Hello" to server, expects "World" back
-#
+# Send the commands from the controller to the robot's brainbucket
 
 import zmq
 import xbox_hid
+
+import struct
+
 context = zmq.Context()
 
 controller = xbox_hid.xbox()
+print("Connecting Bot-Hollywood")
 
-#  Socket to talk to server
-print("Connecting to hello world server…")
 socket = context.socket(zmq.REQ)
-socket.connect("tcp://localhost:5555")
+socket.connect("tcp://192.168.1.108:5555") #localhost for testing
 
 #  Do 10 requests, waiting each time for a response
-for request in range(100):
+
+last_packet = 0
+while True:
     controller.update()
     report = controller.get_left_joystick()
+    packet = struct.pack('HH', report[0], report[1])
+    if (packet != last_packet):
+        socket.send(packet)
+        last_packet = packet
+    
+        #print(f"Sending request {packet} …")
+        
 
-    print(f"Sending request {request} …")
-    socket.send_string(f"From Controller {report}")
-
-    #  Get the reply.
-    message = socket.recv()
-    print(f"Received reply {request} [ {message} ]")
+        #  Get the reply.
+        message = socket.recv()
+        #print(f"Received reply {packet} [ {message} ]")

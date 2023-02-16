@@ -4,7 +4,7 @@ for device in hid.enumerate():
     print(f"0x{device['vendor_id']:04x}:0x{device['product_id']:04x} {device['product_string']}")
 
 gamepad = hid.device()
-gamepad.open(0x045e, 0x02fd)
+gamepad.open(0x045e, 0x0b13)
 gamepad.set_nonblocking(True)
 
 
@@ -44,14 +44,13 @@ right_joystick_depress = 0x40  #64
 buttons3 = 0
 back_button = 0x01
 
-def update():
+while True:
 
     report = gamepad.read(64)
-        while(len(report) != 17):
-            report = gamepad.read(64)
-    
-    if(len(report) == 17):
+    #if(report):
         #print(report)
+
+    if(len(report) == 17):        
         left_joystick_x = report[2]<<8 | report[1]
         left_joystick_y = report[4]<<8 | report[3]
         right_joystick_x = report[6]<<8 | report[5]
@@ -63,8 +62,5 @@ def update():
         buttons2 = report[15]
         buttons3 = report[16]
 
-        #print(left_joystick_x, left_joystick_y, right_joystick_x, right_joystick_y, left_trigger, right_trigger)
+        print(left_joystick_x, left_joystick_y, right_joystick_x, right_joystick_y, left_trigger, right_trigger)
         #print('[{}]'.format(', '.join(hex(x) for x in report)))
-
-def get_left_joystick():
-    return left_joystick_x, left_joystick_y

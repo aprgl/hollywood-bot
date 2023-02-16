@@ -7,7 +7,9 @@ class xbox:
             print(f"0x{device['vendor_id']:04x}:0x{device['product_id']:04x} {device['product_string']}")
 
         self.gamepad = hid.device()
-        self.gamepad.open(0x045e, 0x02fd)
+        #self.gamepad.open(0x045e, 0x02fd) #Model 1708
+        self.gamepad.open(0x045e, 0x0b13) #new controller
+        
         self.gamepad.set_nonblocking(True)
 
 
@@ -70,5 +72,5 @@ class xbox:
             #print('[{}]'.format(', '.join(hex(x) for x in report)))
 
     def get_left_joystick(self):
-        print(self.left_joystick_x, self.left_joystick_y)
+        #print(self.left_joystick_x, self.left_joystick_y)
         return self.left_joystick_x, self.left_joystick_y
